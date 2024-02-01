@@ -2,6 +2,8 @@ const { Model } = require('@sequelize/core');
 module.exports = (sequelize, DataTypes) => {
   class Customer extends Model {
     static associate(models) {
+  this.BoardingTickets = 
+  this.hasMany(models.BoardingTicket);
     }
   };
   Customer.init({
