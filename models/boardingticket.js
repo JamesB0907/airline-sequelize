@@ -47,14 +47,17 @@ module.exports = (sequelize, DataTypes) => {
       });
       //Ensure that the seat the customer has requested is available
       BoardingTicket.beforeSave('checkSeat', async (ticket, options) => {
-        //getDataValue will retrieve the new value (as opposed to the previous/current value)
         const newSeat = ticket.getDataValue('seat');
+        const { transaction } = options;
         if (ticket.changed('seat')) {
-          const boardingTicketExists = BoardingTicket.findOne({
-            where:{ seat: newSeat }
+          const boardingTicketExists = await BoardingTicket.findOne({
+            where: {
+              seat: newSeat
+            },
+            transaction,
           });
-          if (boardingTicketExists) {
-            throw new Error(`The seat ${newSeat} has already been taken.`)
+          if (boardingTicketExists !== null) {
+            throw new Error(`The seat ${newSeat} has already been taken.`);
           }
         }
       });
